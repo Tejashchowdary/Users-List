@@ -9,11 +9,18 @@ function EditUser() {
   const [user, setUser] = useState({ first_name: "", last_name: "", email: "" });
 
   useEffect(() => {
-    fetch(`https://reqres.in/api/users/${id}`)
-      .then((res) => res.json())
-      .then((data) => setUser(data.data))
-      .catch(() => toast.error("Failed to load user details"));
-  }, [id]);
+  fetch(`https://reqres.in/api/users/${id}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": "reqres-free-v1" // ✅ Required header
+    }
+  })
+    .then((res) => res.json())
+    .then((data) => setUser(data.data))
+    .catch(() => toast.error("Failed to load user details"));
+}, [id]);
+
 
   const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
@@ -24,7 +31,9 @@ function EditUser() {
     try {
       const response = await fetch(`https://reqres.in/api/users/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json",
+           "x-api-key": "reqres-free-v1"
+         },
         body: JSON.stringify({
           first_name: user.first_name,
           last_name: user.last_name,

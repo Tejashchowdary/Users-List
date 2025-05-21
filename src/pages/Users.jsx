@@ -14,31 +14,47 @@ function Users() {
   }, [page]);
 
   const fetchUsers = async (pageNumber) => {
-    try {
-      const response = await fetch(`https://reqres.in/api/users?page=${pageNumber}`);
-      const data = await response.json();
-      setUsers(data.data);
-      setTotalPages(data.total_pages);
-    } catch (error) {
-      console.error("Failed to fetch users:", error);
-      toast.error("Failed to fetch users");
-    }
-  };
+  try {
+    const response = await fetch(`https://reqres.in/api/users?page=${pageNumber}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": "reqres-free-v1" // ✅ Add the API key header
+      }
+    });
+
+    const data = await response.json();
+    setUsers(data.data);
+    setTotalPages(data.total_pages);
+  } catch (error) {
+    console.error("Failed to fetch users:", error);
+    toast.error("Failed to fetch users");
+  }
+};
+
 
   const handleDelete = async (id) => {
-    try {
-      const response = await fetch(`https://reqres.in/api/users/${id}`, { method: "DELETE" });
-      if (response.ok) {
-        setUsers(users.filter((user) => user.id !== id));
-        toast.success("User deleted successfully");
-      } else {
-        toast.error("Failed to delete user");
+  try {
+    const response = await fetch(`https://reqres.in/api/users/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": "reqres-free-v1" // ✅ Required header
       }
-    } catch (error) {
-      console.log("Error", error);
-      toast.error("An error occurred while deleting");
+    });
+
+    if (response.ok) {
+      setUsers(users.filter((user) => user.id !== id));
+      toast.success("User deleted successfully");
+    } else {
+      toast.error("Failed to delete user");
     }
-  };
+  } catch (error) {
+    console.log("Error", error);
+    toast.error("An error occurred while deleting");
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
